@@ -52,17 +52,20 @@
     </div>
   </header>
   <main id="main">
-    <article class="main__article__list" v-for="photo in photos" :key="photo.id">
+    <article
+      class="main__article__list"
+      v-for="photo in photos"
+      :key="photo.id"
+    >
       <div>
         <div class="main__article__image">
-          <img
-            :src="photo.url"
-            :alt="photo.title"
-          />
+          <img :src="photo.url" :alt="photo.title" />
         </div>
         <div class="main__article__description">
           <h2>
-            <router-link :to="{ name: 'Article', params: { id: photo.id } }">{{ photo.title }}</router-link>
+            <router-link :to="{ name: 'Article', params: { id: photo.id } }">{{
+              photo.title
+            }}</router-link>
           </h2>
           <div class="main__article__description__information">
             <div>
@@ -114,15 +117,20 @@ export default {
     };
   },
   methods: {
-    setPhotos(data) {
-      this.photos = data.slice(0, 9);
+    // dibuat seperti aja biar best practice dan berjalan secara asynchronus
+    async getPhotos() {
+      axios
+        .get("https://jsonplaceholder.typicode.com/photos")
+        .then((response) => {
+          // langsung masukkin variable aja
+          this.photos = response.data.slice(0, 9);
+        })
+        .catch((error) => console.log(error));
     },
   },
-  mounted() {
-    axios
-    .get('https://jsonplaceholder.typicode.com/photos')
-    .then((response) => this.setPhotos(response.data))
-    .catch((error) => console.log(error));
+  created() {
+    // taruh di lifecycle created aja biar lebih cepat loadnya
+    this.getPhotos();
   },
 };
 </script>
